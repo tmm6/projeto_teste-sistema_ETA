@@ -6,5 +6,5 @@ class PageObject:
         if driver:
             self.driver = driver
         else:
-            self.driver = webdriver.Edge()
+            self.driver = webdriver.Chrome()
             self.driver.implicitly_wait(10)
