@@ -12,12 +12,13 @@ class MenuPageObject(PageObject):
     menu_recruitment = 'Recruitment'
     menu_admin = 'Admin'
     menu_directory = 'Directory'
-
+    menu_pim = 'PIM'
 
     url_time_page = 'https://opensource-demo.orangehrmlive.com/web/index.php/time/viewEmployeeTimesheet'
     url_recruitment = 'https://opensource-demo.orangehrmlive.com/web/index.php/recruitment/viewCandidates'
     url_admin = 'https://opensource-demo.orangehrmlive.com/web/index.php/admin/viewSystemUsers'
     url_directory = 'https://opensource-demo.orangehrmlive.com/web/index.php/directory/viewDirectory'
+    url_employee = 'https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewEmployeeList'
 
     def __init__(self, driver):
         super().__init__(driver=driver)
@@ -41,3 +42,6 @@ class MenuPageObject(PageObject):
 
     def directory_option_menu(self):
         return self.open_menu_item(self.menu_directory, self.url_directory)
+
+    def pim_option_menu(self):
+        return self.open_menu_item(self.menu_pim, self.url_employee)
