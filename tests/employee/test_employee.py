@@ -18,6 +18,11 @@ class Test_Employee:
         assert menu.pim_option_menu(), 'Página diferente'
 
         employee = EmployeePageObject(driver=menu.driver)
+        assert employee.access_add_employee_page(), 'Página diferente'
         employee.add_employee()
-        # assert employee.add_employee(), 'Página diferente'
-        #time.sleep(3)
+        #time.sleep(5)
+        #assert employee.add_employee(), 'Toast não é exibido'
+        assert employee.verify_employee_info(), 'Nome diferente'
+        time.sleep(3)
+
+        # Ao final do teste excluir o cadastro
