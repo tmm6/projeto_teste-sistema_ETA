@@ -1,8 +1,10 @@
 import time
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
 
 from page_object.PageObject import PageObject
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class EmployeePageObject(PageObject):
@@ -29,6 +31,7 @@ class EmployeePageObject(PageObject):
     text_first_name = 'Barbie'
     text_middle_name = 'Millicent'
     text_last_name = 'Roberts'
+    text_toast_msg = 'Successfully Saved'
 
     def __init__(self, driver):
         super().__init__(driver=driver)
@@ -53,26 +56,28 @@ class EmployeePageObject(PageObject):
             self.verify_url(self.url_add_employee)
 
     def add_employee(self):
+        """
+        Método para adicionar um usuário. Ao final é verificado o toast.
+        :return:
+        """
         self.first_name_field()
         self.middle_name_field()
         self.last_name_field()
         self.click_button_save_employee()
         # Verificar se o toast de confirmação do cadastro é exibido
-        try:
-            time.sleep(2)
-            self.driver.find_element(By.CLASS_NAME, self.css_class_toast)
-            # Melhorar a verficação do toast
-        except:
-            return False
+        toast = WebDriverWait(self.driver, timeout=5).until(
+            lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
+        print(toast.text)
+        result = self.text_toast_msg in toast.text
+        print(result)
+        return result
 
     def verify_employee_info(self):
-        self.driver.get('https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewPersonalDetails/empNumber/38')
-        current_name = self.driver.find_element(By.CLASS_NAME, self.css_class_name_employee).text
-        #print(current_name.text)
-        correct_name = ' '.join(["Thays", "Melo"])
-        #correct_name = ' '.join([self.text_first_name, self.text_last_name])
-        print(correct_name)
-        print(correct_name == current_name)
+        current_name = WebDriverWait(self.driver, timeout=10).until(
+            lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_name_employee))
+
+        name = ' '.join([self.text_first_name, self.text_last_name])
+        return name == current_name
 
     def search_employee(self):
         list_elements_search = self.driver.find_elements(By.CSS_SELECTOR, self.css_placeholder_employee_name)
