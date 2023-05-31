@@ -9,7 +9,7 @@ class PageObject:
     css_class_option_popup_delete = 'orangehrm-button-margin'
 
     ## Texts
-    text_confirm_popup_delete = 'Yes, Delete'
+    text_confirm_popup_delete = 'Yes'
 
     def __init__(self, driver=None):
         if driver:
@@ -51,6 +51,6 @@ class PageObject:
         for i in range(len(options_popup_delete)):
             current_option = options_popup_delete[i]
             print(current_option.text)
-            if current_option == option:
+            if option in current_option.text:
                 print('Deu certo')
-                #current_option.click()
+                current_option.click()

@@ -23,6 +23,7 @@ class EmployeePageObject(PageObject):
     css_placeholder_employee_name = '[placeholder="Type for hints..."]'
     css_class_cells_employees = '[role = "cell"]'
     css_class_delete_employee_button = 'bi-trash'
+    css_class_titles_profile_info = 'orangehrm-main-title'
 
     ## Text
     text_add_employee_button = 'Add'
@@ -32,6 +33,7 @@ class EmployeePageObject(PageObject):
     text_middle_name = 'Millicent'
     text_last_name = 'Roberts'
     text_toast_msg = 'Successfully Saved'
+    text_list_titles_profile_employee = ['PersonalDetails', 'CustomFields', 'Attachments']
 
     def __init__(self, driver):
         super().__init__(driver=driver)
@@ -60,34 +62,48 @@ class EmployeePageObject(PageObject):
         Método para adicionar um usuário. Ao final é verificado o toast.
         :return:
         """
+        time.sleep(4)
         self.first_name_field()
         self.middle_name_field()
         self.last_name_field()
         self.click_button_save_employee()
         # Verificar se o toast de confirmação do cadastro é exibido
-        toast = WebDriverWait(self.driver, timeout=5).until(
+        toast = WebDriverWait(self.driver, timeout=12).until(
             lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
-        print(toast.text)
         result = self.text_toast_msg in toast.text
-        print(result)
         return result
 
-    def verify_employee_info(self):
-        current_name = WebDriverWait(self.driver, timeout=10).until(
+    def verify_employee_name(self):
+        time.sleep(10)
+        current_name = WebDriverWait(self.driver, timeout=12).until(
             lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_name_employee))
+        name = ''.join([self.text_first_name, self.text_last_name])
+        return name == current_name.text.replace(' ', '')
 
-        name = ' '.join([self.text_first_name, self.text_last_name])
-        return name == current_name
+    def verify_employee_profile_titles(self):
+        # Alterar para outro tipo de espera.
+        time.sleep(4)
+        titles_list = WebDriverWait(self.driver, timeout=10).until(
+            lambda toast_element: toast_element.find_elements(By.CLASS_NAME, self.css_class_titles_profile_info))
+        print(len(titles_list))
+        for i in range(len(titles_list)):
+            print(titles_list[i].text)
+            if titles_list[i].replace(' ', '') != self.text_list_titles_profile_employee[i]:
+                print('deu errado')
+                return False
+        return True
 
     def search_employee(self):
+        time.sleep(2)
         list_elements_search = self.driver.find_elements(By.CSS_SELECTOR, self.css_placeholder_employee_name)
         employee_name = list_elements_search[0]
-        employee_name.send_keys('Charlie')
+        employee_name.send_keys(self.text_first_name)
         self.click_correct_button(expect_title=self.text_search_employee)
         # Trocar por um WebDriverWait
-        time.sleep(1)
+        time.sleep(5)
         list_employees = self.driver.find_elements(By.CSS_SELECTOR, self.css_class_cells_employees)
-        if list_employees[2].text == 'Charlie':
+        if list_employees[3].text == self.text_last_name:
+            print(list_employees[3].text == self.text_last_name)
             return True
 
     def delete_employee(self):
@@ -103,7 +119,7 @@ class EmployeePageObject(PageObject):
             time.sleep(2)
             self.driver.find_element(By.CLASS_NAME, self.css_class_delete_employee_button).click()
             # Trocar por um WebDriverWait
-            time.sleep(1)
+            time.sleep(2)
             self.confirm_popup_delete_data()
 
 
