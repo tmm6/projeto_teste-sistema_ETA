@@ -17,10 +17,22 @@ def login(login_page):
     login_page.login()
     yield login_page
 
+
 @pytest.fixture()
-def after_tests_employee(login):
+def after_add_tests_employee(login):
     menu = MenuPageObject(driver=login.driver)
     employee = EmployeePageObject(driver=menu.driver)
     yield login
     menu.pim_option_menu()
+    employee.search_employee()
     employee.delete_employee()
+
+
+@pytest.fixture()
+def before_delete_tests_employee(login):
+    menu = MenuPageObject(driver=login.driver)
+    employee = EmployeePageObject(driver=menu.driver)
+    menu.pim_option_menu()
+    employee.access_add_employee_page()
+    employee.add_employee()
+    yield login

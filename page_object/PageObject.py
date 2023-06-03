@@ -50,7 +50,5 @@ class PageObject:
         options_popup_delete = self.driver.find_elements(By.CLASS_NAME, self.css_class_option_popup_delete)
         for i in range(len(options_popup_delete)):
             current_option = options_popup_delete[i]
-            print(current_option.text)
             if option in current_option.text:
-                print('Deu certo')
                 current_option.click()

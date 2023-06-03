@@ -1,5 +1,6 @@
 import time
 
+from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -32,7 +33,9 @@ class EmployeePageObject(PageObject):
     text_first_name = 'Barbie'
     text_middle_name = 'Millicent'
     text_last_name = 'Roberts'
-    text_toast_msg = 'Successfully Saved'
+    text_toast_msg_create = 'Successfully Saved'
+    text_toast_msg_delete = 'Successfully Deleted'
+    text_toast_msg_not_found_search = 'No Records Found'
     text_list_titles_profile_employee = ['PersonalDetails', 'CustomFields', 'Attachments']
 
     def __init__(self, driver):
@@ -67,10 +70,13 @@ class EmployeePageObject(PageObject):
         self.middle_name_field()
         self.last_name_field()
         self.click_button_save_employee()
+        return self.verify_toast_message(self.text_toast_msg_create)
+
+    def verify_toast_message(self, message):
         # Verificar se o toast de confirmação do cadastro é exibido
         toast = WebDriverWait(self.driver, timeout=12).until(
             lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
-        result = self.text_toast_msg in toast.text
+        result = message in toast.text
         return result
 
     def verify_employee_name(self):
@@ -89,7 +95,6 @@ class EmployeePageObject(PageObject):
         for i in range(len(titles_list)):
             print(titles_list[i].text)
             if titles_list[i].replace(' ', '') != self.text_list_titles_profile_employee[i]:
-                print('deu errado')
                 return False
         return True
 
@@ -97,30 +102,39 @@ class EmployeePageObject(PageObject):
         time.sleep(2)
         list_elements_search = self.driver.find_elements(By.CSS_SELECTOR, self.css_placeholder_employee_name)
         employee_name = list_elements_search[0]
+        if employee_name.get_attribute('value'):
+            employee_name.send_keys(Keys.SHIFT + Keys.HOME + Keys.DELETE)
+
         employee_name.send_keys(self.text_first_name)
         self.click_correct_button(expect_title=self.text_search_employee)
         # Trocar por um WebDriverWait
         time.sleep(5)
+
+    def verify_search_result(self):
         list_employees = self.driver.find_elements(By.CSS_SELECTOR, self.css_class_cells_employees)
         if list_employees[3].text == self.text_last_name:
-            print(list_employees[3].text == self.text_last_name)
             return True
+        else:
+            return False
+
+    def search_employee_empty(self):
+        if self.search_employee():
+            return False
+        else:
+            return self.verify_toast_message(self.text_toast_msg_not_found_search)
 
     def delete_employee(self):
-        """
-        1 - Pesquisar um funcionario
-        2 - Verificar se ele está na lista
-        3 - Clicar no ícone da lixeira
-        4 - Clicar em confirmar no popup
-        5 - Verificar toast
-        6 - Verificar que tem 0 ocorrências na lista de funcionários
-        """
-        if self.search_employee():
-            time.sleep(2)
-            self.driver.find_element(By.CLASS_NAME, self.css_class_delete_employee_button).click()
-            # Trocar por um WebDriverWait
-            time.sleep(2)
-            self.confirm_popup_delete_data()
+        # if self.search_employee():
+        time.sleep(2)
+        self.driver.find_element(By.CLASS_NAME, self.css_class_delete_employee_button).click()
+        # Trocar por um WebDriverWait
+        time.sleep(2)
+        self.confirm_popup_delete_data()
+        time.sleep(2)
+        return self.verify_toast_message(self.text_toast_msg_delete)
+
+
+
 
 
 

@@ -8,6 +8,7 @@ class MenuPageObject(PageObject):
     # Locators
 
     class_list_options_menu = 'oxd-main-menu-item--name'
+
     menu_time = 'Time'
     menu_recruitment = 'Recruitment'
     menu_admin = 'Admin'
