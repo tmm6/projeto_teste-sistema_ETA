@@ -36,3 +36,15 @@ def before_delete_tests_employee(login):
     employee.access_add_employee_page()
     employee.add_employee()
     yield login
+
+@pytest.fixture()
+def before_after_search_tests_employee(login):
+    menu = MenuPageObject(driver=login.driver)
+    employee = EmployeePageObject(driver=menu.driver)
+    menu.pim_option_menu()
+    employee.access_add_employee_page()
+    employee.add_employee()
+    yield login
+    menu.pim_option_menu()
+    employee.search_employee()
+    employee.delete_employee()

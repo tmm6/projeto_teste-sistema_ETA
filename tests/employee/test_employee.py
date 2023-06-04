@@ -27,16 +27,24 @@ class Test_Employee:
         assert employee.access_add_employee_page(), 'Página diferente'
         assert employee.add_employee(), 'Cadastro não realizado'
         assert employee.verify_employee_name(), 'Nome diferente'
-        #assert employee.verify_employee_profile_titles(), 'Página diferente do perfil'
+        # assert employee.verify_employee_profile_titles(), 'Página diferente do perfil'
         time.sleep(3)
 
         # Ao final do teste excluir o cadastro
 
-    def test_search_employee_by_name(self, login):
-        menu = MenuPageObject(driver=login.driver)
+    def test_search_employee_by_name(self, before_after_search_tests_employee):
+        """
+        1- No menu, clique na opção "PIM"
+        2- Pesquisar um funcionário
+        3- Verificar se o funcionário é encontrado
+        :param login:
+        :return:
+        """
+        menu = MenuPageObject(driver=before_after_search_tests_employee.driver)
         assert menu.pim_option_menu(), 'Página diferente'
         employee = EmployeePageObject(driver=menu.driver)
         employee.search_employee()
+        employee.verify_search_result()
         time.sleep(5)
 
     def test_delete_employee(self, before_delete_tests_employee):
@@ -53,12 +61,5 @@ class Test_Employee:
         employee = EmployeePageObject(driver=menu.driver)
         employee.search_employee()
         assert employee.delete_employee(), 'Exclusão não realizada'
-        time.sleep(3)
-        assert employee.search_employee_empty(), 'Não foi'
-
-
-    def test_algo(self, login):
-        menu = MenuPageObject(driver=login.driver)
-        menu.pim_option_menu()
-        employee = EmployeePageObject(driver=menu.driver)
-        employee.search_employee_empty()
+        employee.search_employee()
+        assert employee.verify_search_result(), 'Funcionário ainda existe'

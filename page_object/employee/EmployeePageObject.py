@@ -25,6 +25,7 @@ class EmployeePageObject(PageObject):
     css_class_cells_employees = '[role = "cell"]'
     css_class_delete_employee_button = 'bi-trash'
     css_class_titles_profile_info = 'orangehrm-main-title'
+    css_class_amount_of_search_result = 'orangehrm-vertical-padding'
 
     ## Text
     text_add_employee_button = 'Add'
@@ -36,6 +37,7 @@ class EmployeePageObject(PageObject):
     text_toast_msg_create = 'Successfully Saved'
     text_toast_msg_delete = 'Successfully Deleted'
     text_toast_msg_not_found_search = 'No Records Found'
+    text_toast_msg_found_search = '(1) Record Found'
     text_list_titles_profile_employee = ['PersonalDetails', 'CustomFields', 'Attachments']
 
     def __init__(self, driver):
@@ -91,9 +93,7 @@ class EmployeePageObject(PageObject):
         time.sleep(4)
         titles_list = WebDriverWait(self.driver, timeout=10).until(
             lambda toast_element: toast_element.find_elements(By.CLASS_NAME, self.css_class_titles_profile_info))
-        print(len(titles_list))
         for i in range(len(titles_list)):
-            print(titles_list[i].text)
             if titles_list[i].replace(' ', '') != self.text_list_titles_profile_employee[i]:
                 return False
         return True
@@ -107,25 +107,19 @@ class EmployeePageObject(PageObject):
 
         employee_name.send_keys(self.text_first_name)
         self.click_correct_button(expect_title=self.text_search_employee)
-        # Trocar por um WebDriverWait
-        time.sleep(5)
 
     def verify_search_result(self):
-        list_employees = self.driver.find_elements(By.CSS_SELECTOR, self.css_class_cells_employees)
-        if list_employees[3].text == self.text_last_name:
-            return True
-        else:
-            return False
-
-    def search_employee_empty(self):
-        if self.search_employee():
-            return False
-        else:
+        result = self.driver.find_element(By.CLASS_NAME, self.css_class_amount_of_search_result)
+        if result.text == self.text_toast_msg_not_found_search:
             return self.verify_toast_message(self.text_toast_msg_not_found_search)
+        else:
+            list_employees = self.driver.find_elements(By.CSS_SELECTOR, self.css_class_cells_employees)
+            name = ' '.join([self.text_first_name, self.text_middle_name])
+            assert_name = list_employees[2].text == name
+            assert_amount_result = result.text == self.text_toast_msg_found_search
+            return assert_name and assert_amount_result
 
     def delete_employee(self):
-        # if self.search_employee():
-        time.sleep(2)
         self.driver.find_element(By.CLASS_NAME, self.css_class_delete_employee_button).click()
         # Trocar por um WebDriverWait
         time.sleep(2)
