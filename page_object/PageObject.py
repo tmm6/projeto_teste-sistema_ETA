@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class PageObject:
@@ -7,6 +8,7 @@ class PageObject:
     ## Elements
     css_type_add_button = 'oxd-button--secondary'
     css_class_option_popup_delete = 'orangehrm-button-margin'
+    css_class_toast = 'oxd-toast-container--toast'
 
     ## Texts
     text_confirm_popup_delete = 'Yes'
@@ -52,3 +54,10 @@ class PageObject:
             current_option = options_popup_delete[i]
             if option in current_option.text:
                 current_option.click()
+
+    def verify_toast_message(self, message):
+        # Verificar se o toast de confirmação do cadastro é exibido
+        toast = WebDriverWait(self.driver, timeout=12).until(
+            lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
+        result = message in toast.text
+        return result

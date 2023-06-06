@@ -18,7 +18,6 @@ class EmployeePageObject(PageObject):
     css_name_middle_name = 'middleName'
     css_name_last_name = 'lastName'
     css_button_save = '[type="submit"]'
-    css_class_toast = 'oxd-toast-container--toast'
     css_class_title_add_employee = 'orangehrm-main-title'
     css_class_name_employee = 'orangehrm-edit-employee-name'
     css_placeholder_employee_name = '[placeholder="Type for hints..."]'
@@ -74,12 +73,12 @@ class EmployeePageObject(PageObject):
         self.click_button_save_employee()
         return self.verify_toast_message(self.text_toast_msg_create)
 
-    def verify_toast_message(self, message):
-        # Verificar se o toast de confirmação do cadastro é exibido
-        toast = WebDriverWait(self.driver, timeout=12).until(
-            lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
-        result = message in toast.text
-        return result
+    # def verify_toast_message(self, message):
+    #     # Verificar se o toast de confirmação do cadastro é exibido
+    #     toast = WebDriverWait(self.driver, timeout=12).until(
+    #         lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
+    #     result = message in toast.text
+    #     return result
 
     def verify_employee_name(self):
         time.sleep(10)

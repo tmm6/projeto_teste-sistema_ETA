@@ -13,7 +13,3 @@ class Test_Delete_Canditade:
         time.sleep(3)
         assert candidate.delete_candidate()
         time.sleep(3)
-
-
-
-

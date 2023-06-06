@@ -14,7 +14,7 @@ class Test_Search:
         time.sleep(3)
         assert search.text_search_valido(valid_search_text)
 
-    def test_search_invalid(self,te amo  papai login):
+    def test_search_invalid(self, login):
         valid_search_text = 'ch'
         menu = MenuPageObject(driver=login.driver)
         search = SearchPageObject(driver=menu.driver)
