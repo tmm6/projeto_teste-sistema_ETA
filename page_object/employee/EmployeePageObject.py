@@ -5,7 +5,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
 from page_object.PageObject import PageObject
-from selenium.webdriver.support import expected_conditions as EC
 
 
 class EmployeePageObject(PageObject):
@@ -37,12 +36,11 @@ class EmployeePageObject(PageObject):
     text_toast_msg_delete = 'Successfully Deleted'
     text_toast_msg_not_found_search = 'No Records Found'
     text_toast_msg_found_search = '(1) Record Found'
-    text_list_titles_profile_employee = ['PersonalDetails', 'CustomFields', 'Attachments']
+    text_list_titles_profile_employee = ['Personal Details', 'Custom Fields', 'Attachments']
 
     def __init__(self, driver):
         super().__init__(driver=driver)
 
-    # Métodos para preencher os campos
     def first_name_field(self):
         self.driver.find_element(By.NAME, self.css_name_first_name).send_keys(self.text_first_name)
 
@@ -55,30 +53,10 @@ class EmployeePageObject(PageObject):
     def click_button_save_employee(self):
         self.driver.find_element(By.CSS_SELECTOR, self.css_button_save).click()
 
-    # Método para acessar a tela de adicionar um funcionário.
     def access_add_employee_page(self):
         self.click_correct_button(expect_title=self.text_add_employee_button)
         return self.verify_title(self.text_title_add_employee, self.css_class_title_add_employee) and \
             self.verify_url(self.url_add_employee)
-
-    def add_employee(self):
-        """
-        Método para adicionar um usuário. Ao final é verificado o toast.
-        :return:
-        """
-        time.sleep(4)
-        self.first_name_field()
-        self.middle_name_field()
-        self.last_name_field()
-        self.click_button_save_employee()
-        return self.verify_toast_message(self.text_toast_msg_create)
-
-    # def verify_toast_message(self, message):
-    #     # Verificar se o toast de confirmação do cadastro é exibido
-    #     toast = WebDriverWait(self.driver, timeout=12).until(
-    #         lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
-    #     result = message in toast.text
-    #     return result
 
     def verify_employee_name(self):
         time.sleep(10)
@@ -93,19 +71,9 @@ class EmployeePageObject(PageObject):
         titles_list = WebDriverWait(self.driver, timeout=10).until(
             lambda toast_element: toast_element.find_elements(By.CLASS_NAME, self.css_class_titles_profile_info))
         for i in range(len(titles_list)):
-            if titles_list[i].replace(' ', '') != self.text_list_titles_profile_employee[i]:
+            if titles_list[i].text != self.text_list_titles_profile_employee[i]:
                 return False
         return True
-
-    def search_employee(self):
-        time.sleep(2)
-        list_elements_search = self.driver.find_elements(By.CSS_SELECTOR, self.css_placeholder_employee_name)
-        employee_name = list_elements_search[0]
-        if employee_name.get_attribute('value'):
-            employee_name.send_keys(Keys.SHIFT + Keys.HOME + Keys.DELETE)
-
-        employee_name.send_keys(self.text_first_name)
-        self.click_correct_button(expect_title=self.text_search_employee)
 
     def verify_search_result(self):
         result = self.driver.find_element(By.CLASS_NAME, self.css_class_amount_of_search_result)
@@ -117,6 +85,26 @@ class EmployeePageObject(PageObject):
             assert_name = list_employees[2].text == name
             assert_amount_result = result.text == self.text_toast_msg_found_search
             return assert_name and assert_amount_result
+
+    def add_employee(self):
+        # Método para adicionar um usuário. Ao final é verificado o toast.
+        time.sleep(4)
+        self.first_name_field()
+        self.middle_name_field()
+        self.last_name_field()
+        self.click_button_save_employee()
+        return self.verify_toast_message(self.text_toast_msg_create)
+
+    def search_employee(self):
+        time.sleep(2)
+        list_elements_search = self.driver.find_elements(By.CSS_SELECTOR, self.css_placeholder_employee_name)
+        employee_name = list_elements_search[0]
+        # Este if verifica se já existe algo digitado no campo. Caso tenha ele irá apagar o conteúdo.
+        if employee_name.get_attribute('value'):
+            employee_name.send_keys(Keys.SHIFT + Keys.HOME + Keys.DELETE)
+
+        employee_name.send_keys(self.text_first_name)
+        self.click_correct_button(expect_title=self.text_search_employee)
 
     def delete_employee(self):
         self.driver.find_element(By.CLASS_NAME, self.css_class_delete_employee_button).click()

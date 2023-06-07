@@ -56,7 +56,12 @@ class PageObject:
                 current_option.click()
 
     def verify_toast_message(self, message):
-        # Verificar se o toast de confirmação do cadastro é exibido
+        """
+        Este método verifica se o toast está sendo exibido e com a mensagem correta
+        :param message: Corresponde a mensagem da funcionalidade realizada. Ela pode ser uma mensagem de sucesso, não
+        encontrado, etc.
+        :return: True ou False
+        """
         toast = WebDriverWait(self.driver, timeout=12).until(
             lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
         result = message in toast.text
