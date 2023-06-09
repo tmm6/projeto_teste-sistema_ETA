@@ -1,6 +1,7 @@
 import time
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.select import Select
 from page_object.PageObject import PageObject
 
 
@@ -14,7 +15,7 @@ class CandidatesVacancyPageObject(PageObject):
     css_name_first_name = 'firstName'
     css_name_middle_name = 'middleName'
     css_name_last_name = 'lastName'
-    css_class_vacancy = 'oxd-select-text'
+    #css_class_vacancy = 'oxd-select-text--input'
     css_class_email = 'oxd-input--active'
     css_class_contact_number = 'oxd-input--active'
     css_class_keyword = 'oxd-input--active'
@@ -72,11 +73,13 @@ class CandidatesVacancyPageObject(PageObject):
         self.driver.find_element(By.CSS_SELECTOR, self.css_button_save).click()
 
     def add_candidate(self):
+        time.sleep(5)
         self.driver.get(self.url_add_candidate)
+        time.sleep(5)
         self.first_name_field()
         self.middle_name_field()
         self.last_name_field()
-        ## self.vacancy_field()
+        #self.vacancy_field()
         self.email_field()
         self.contact_number_field()
         self.keywords_field()
