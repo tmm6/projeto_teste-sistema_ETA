@@ -26,7 +26,10 @@ class PageObject:
         return correct_url == self.driver.current_url
 
     def verify_title(self, correct_title, element_title):
-        current_title = self.driver.find_element(By.CLASS_NAME, element_title).text
+        current_title = WebDriverWait(self.driver, timeout=10).until(
+            lambda current_element: current_element.find_element(By.CLASS_NAME, element_title).text)
+
+        #current_title = self.driver.find_element(By.CLASS_NAME, element_title).text
         return correct_title == current_title
 
     def click_correct_button(self, element=css_type_add_button, expect_title=""):
@@ -62,7 +65,7 @@ class PageObject:
         encontrado, etc.
         :return: True ou False
         """
-        toast = WebDriverWait(self.driver, timeout=12).until(
+        toast = WebDriverWait(self.driver, timeout=15).until(
             lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_toast))
         result = message in toast.text
         return result

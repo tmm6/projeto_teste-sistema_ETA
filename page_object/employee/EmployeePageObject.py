@@ -25,6 +25,7 @@ class EmployeePageObject(PageObject):
     css_class_titles_profile_info = 'orangehrm-main-title'
     css_class_amount_of_search_result = 'orangehrm-vertical-padding'
 
+
     ## Text
     text_add_employee_button = 'Add'
     text_search_employee = 'Search'
@@ -59,9 +60,9 @@ class EmployeePageObject(PageObject):
             self.verify_url(self.url_add_employee)
 
     def verify_employee_name(self):
-        time.sleep(10)
+        time.sleep(5)
         current_name = WebDriverWait(self.driver, timeout=12).until(
-            lambda toast_element: toast_element.find_element(By.CLASS_NAME, self.css_class_name_employee))
+            lambda name_element: name_element.find_element(By.CLASS_NAME, self.css_class_name_employee))
         name = ''.join([self.text_first_name, self.text_last_name])
         return name == current_name.text.replace(' ', '')
 
@@ -69,13 +70,14 @@ class EmployeePageObject(PageObject):
         # Alterar para outro tipo de espera.
         time.sleep(4)
         titles_list = WebDriverWait(self.driver, timeout=10).until(
-            lambda toast_element: toast_element.find_elements(By.CLASS_NAME, self.css_class_titles_profile_info))
+            lambda titles_element: titles_element.find_elements(By.CLASS_NAME, self.css_class_titles_profile_info))
         for i in range(len(titles_list)):
             if titles_list[i].text != self.text_list_titles_profile_employee[i]:
                 return False
         return True
 
     def verify_search_result(self):
+        time.sleep(3)
         result = self.driver.find_element(By.CLASS_NAME, self.css_class_amount_of_search_result)
         if result.text == self.text_toast_msg_not_found_search:
             return self.verify_toast_message(self.text_toast_msg_not_found_search)
@@ -88,7 +90,7 @@ class EmployeePageObject(PageObject):
 
     def add_employee(self):
         # Método para adicionar um usuário. Ao final é verificado o toast.
-        time.sleep(4)
+        time.sleep(3)
         self.first_name_field()
         self.middle_name_field()
         self.last_name_field()
@@ -96,7 +98,7 @@ class EmployeePageObject(PageObject):
         return self.verify_toast_message(self.text_toast_msg_create)
 
     def search_employee(self):
-        time.sleep(2)
+        time.sleep(3)
         list_elements_search = self.driver.find_elements(By.CSS_SELECTOR, self.css_placeholder_employee_name)
         employee_name = list_elements_search[0]
         # Este if verifica se já existe algo digitado no campo. Caso tenha ele irá apagar o conteúdo.
@@ -107,11 +109,11 @@ class EmployeePageObject(PageObject):
         self.click_correct_button(expect_title=self.text_search_employee)
 
     def delete_employee(self):
+        time.sleep(3)
         self.driver.find_element(By.CLASS_NAME, self.css_class_delete_employee_button).click()
-        # Trocar por um WebDriverWait
-        time.sleep(2)
+        time.sleep(3)
         self.confirm_popup_delete_data()
-        time.sleep(2)
+        time.sleep(3)
         return self.verify_toast_message(self.text_toast_msg_delete)
 
 
