@@ -2,8 +2,8 @@
 import time
 
 from page_object.search.SearchPageObject import SearchPageObject
-from page_object.recruitment.CandidatePageObject import CandidatePageObject
-from page_object.recruitment.CandidatesVacancyPageObject import CandidatesVacancyPageObject
+from page_object.candidate.CandidatePageObject import CandidatePageObject
+from page_object.candidate.CandidatesVacancyPageObject import CandidatesVacancyPageObject
 from page_object.menu.MenuPageObject import MenuPageObject
 
 
